@@ -34,7 +34,7 @@ module Foursquare
       Foursquare.log("GET #{API + path}")
       Foursquare.log("PARAMS: #{params.inspect}")
       merge_auth_params(params)
-      response = JSON.parse(Typhoeus::Request.get(API + path, :params => params).body)
+      response = JSON.parse(https_get("#{API}#{path}?#{params.to_query}").body)
       Foursquare.log(response.inspect)
       error(response) || response["response"]
     end
@@ -67,7 +67,7 @@ module Foursquare
       Foursquare.log("POST #{API + path}")
       Foursquare.log("PARAMS: #{params.inspect}")
       merge_auth_params(params)
-      response = JSON.parse(Typhoeus::Request.post(API + path, :params => params).body)
+      response = JSON.parse(https_post(API + path, params).body)
       Foursquare.log(response.inspect)
       error(response) || response["response"]
     end
@@ -111,7 +111,7 @@ module Foursquare
       
       # response
       # http://developer.foursquare.com/docs/oauth.html
-      response = JSON.parse(Typhoeus::Request.get(url).body)
+      response = JSON.parse(https_get(url).body)
       response["access_token"]
     end
 
