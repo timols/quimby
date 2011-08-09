@@ -38,6 +38,29 @@ module Foursquare
       Foursquare.log(response.inspect)
       error(response) || response["response"]
     end
+    
+    def https_request(url)
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      return http
+    end
+
+    def https_get(url)
+      http = https_request(url)
+      req = Net::HTTP::Get.new(URI.parse(url).request_uri)
+      res = http.request(req)
+      return res
+    end
+
+    def https_post(url, params={})
+      http = https_request(url)
+      req = Net::HTTP::Post.new(URI.parse(url).request_uri)
+      req.set_form_data(params)
+      res = http.request(req)
+      return res
+    end
 
     def post(path, params={})
       params = camelize(params)
